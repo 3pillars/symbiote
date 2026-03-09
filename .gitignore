@@ -1,0 +1,29 @@
+node_modules/
+artifacts/
+cache/
+typechain-types/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Deployment
+deployment.json
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test coverage
+coverage/
+coverage.json
+
+# Hardhat
+broadcast/
