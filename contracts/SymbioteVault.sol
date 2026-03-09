@@ -59,6 +59,11 @@ contract SymbioteVault is Ownable, ReentrancyGuard {
         _;
     }
 
+    modifier onlyAgentOrOwner() {
+        require(authorizedAgents[msg.sender] || msg.sender == owner(), "Not authorized");
+        _;
+    }
+
     modifier whenNotPaused() {
         require(!paused, "Vault is paused");
         _;
@@ -156,7 +161,8 @@ contract SymbioteVault is Ownable, ReentrancyGuard {
         bytes32 tradeId,
         int256 pnl,
         uint256 volume
-    ) external onlyAgent whenNotPaused nonReentrant {
+    ) external onlyAgentOrOwner whenNotPaused nonReentrant {
+        require(authorizedAgents[agent], "Agent not registered");
         require(volume <= maxPositionSize, "Position too large");
         
         // Check daily loss limit
