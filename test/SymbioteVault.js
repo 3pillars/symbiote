@@ -10,7 +10,7 @@ describe("SymbioteVault - Comprehensive Tests", function () {
     [owner, user1, user2, agent1, agent2] = await ethers.getSigners();
     
     const Vault = await ethers.getContractFactory("SymbioteVault");
-    vault = await Vault.deploy();
+    vault = await Vault.deploy(ethers.ZeroAddress); // No timelock initially
     await vault.waitForDeployment();
   });
 
