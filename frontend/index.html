@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Symbiote - Self-Organizing Trading Agents</title>
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-card: #1a1a24;
+            --accent: #00d4aa;
+            --accent-glow: rgba(0, 212, 170, 0.3);
+            --text-primary: #ffffff;
+            --text-secondary: #8888aa;
+            --success: #00d4aa;
+            --danger: #ff4757;
+            --warning: #ffa502;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        /* Header */
+        header {
+            background: var(--bg-secondary);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo span {
+            background: linear-gradient(135deg, var(--accent), #00a388);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        nav a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            margin-left: 2rem;
+            transition: color 0.2s;
+        }
+
+        nav a:hover {
+            color: var(--accent);
+        }
+
+        /* Main */
+        main {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Hero */
+        .hero {
+            text-align: center;
+            padding: 4rem 0;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #fff, var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto 2rem;
+        }
+
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            margin-top: 3rem;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* Dashboard */
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--success);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--success);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Portfolio */
+        .portfolio-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 1rem 0;
+        }
+
+        .portfolio-change {
+            color: var(--success);
+            font-size: 0.9rem;
+        }
+
+        .portfolio-change.negative {
+            color: var(--danger);
+        }
+
+        /* Agents */
+        .agent-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .agent-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: var(--bg-secondary);
+            border-radius: 12px;
+        }
+
+        .agent-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--accent), #00a388);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .agent-info {
+            flex: 1;
+        }
+
+        .agent-name {
+            font-weight: 600;
+        }
+
+        .agent-status {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .agent-pnl {
+            font-weight: 600;
+            color: var(--success);
+        }
+
+        /* Actions */
+        .actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: var(--bg-primary);
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 0 30px var(--accent-glow);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--accent);
+        }
+
+        /* Activity */
+        .activity-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+
+        .activity-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+        }
+
+        .activity-icon.trade {
+            background: rgba(0, 212, 170, 0.2);
+        }
+
+        .activity-icon.alert {
+            background: rgba(255, 165, 2, 0.2);
+        }
+
+        .activity-time {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            margin-left: auto;
+        }
+
+        /* Connect Wallet */
+        .connect-section {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: var(--bg-card);
+            border-radius: 24px;
+            margin-top: 2rem;
+        }
+
+        .connect-section h2 {
+            margin-bottom: 1rem;
+        }
+
+        .connect-section p {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-secondary);
+            margin-top: 4rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .hero-stats {
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+            
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="/" class="logo">⬡ <span>Symbiote</span></a>
+        <nav>
+            <a href="#dashboard">Dashboard</a>
+            <a href="#agents">Agents</a>
+            <a href="#activity">Activity</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero">
+            <h1>Self-Organizing Trading Agents</h1>
+            <p>AI-powered agents that collaborate autonomously to trade in DeFi. No manual trading needed.</p>
+            
+            <div class="hero-stats">
+                <div class="stat">
+                    <div class="stat-value">$0</div>
+                    <div class="stat-label">Total Value Locked</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">3</div>
+                    <div class="stat-label">Active Agents</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">0%</div>
+                    <div class="stat-label">Total Return</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="connect-section" id="connect">
+            <h2>Connect Your Wallet</h2>
+            <p>Start trading with autonomous AI agents in minutes.</p>
+            <button class="btn btn-primary" onclick="connectWallet()">Connect Wallet</button>
+        </section>
+
+        <section class="dashboard" id="dashboard" style="display: none;">
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">Portfolio</span>
+                    <div class="status">
+                        <div class="status-dot"></div>
+                        Active
+                    </div>
+                </div>
+                <div class="portfolio-value">$0.00</div>
+                <div class="portfolio-change">+$0.00 (0%)</div>
+                
+                <div class="actions">
+                    <button class="btn btn-primary">Deposit</button>
+                    <button class="btn btn-secondary">Withdraw</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">Active Agents</span>
+                    <div class="status">
+                        <div class="status-dot"></div>
+                        Running
+                    </div>
+                </div>
+                <div class="agent-list">
+                    <div class="agent-item">
+                        <div class="agent-icon">📡</div>
+                        <div class="agent-info">
+                            <div class="agent-name">Alpha Scanner</div>
+                            <div class="agent-status">Scanning for opportunities...</div>
+                        </div>
+                        <div class="agent-pnl">+0.00%</div>
+                    </div>
+                    <div class="agent-item">
+                        <div class="agent-icon">⚡</div>
+                        <div class="agent-info">
+                            <div class="agent-name">Executor</div>
+                            <div class="agent-status">Waiting for signals</div>
+                        </div>
+                        <div class="agent-pnl">-</div>
+                    </div>
+                    <div class="agent-item">
+                        <div class="agent-icon">🛡️</div>
+                        <div class="agent-info">
+                            <div class="agent-name">Risk Manager</div>
+                            <div class="agent-status">Monitoring positions</div>
+                        </div>
+                        <div class="agent-pnl">Safe</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">Recent Activity</span>
+                </div>
+                <div class="activity-list">
+                    <div class="activity-item">
+                        <div class="activity-icon trade">💰</div>
+                        <span>No trades yet</span>
+                        <span class="activity-time">-</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">Risk Controls</span>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 1rem; margin-top: 1rem;">
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: var(--text-secondary);">Max Position</span>
+                        <span>20 ETH</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: var(--text-secondary);">Daily Loss Limit</span>
+                        <span>1.5%</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: var(--text-secondary);">Auto-Pause</span>
+                        <span style="color: var(--success);">Enabled</span>
+                    </div>
+                </div>
+                <button class="btn btn-secondary" style="width: 100%; margin-top: 1rem;">Configure</button>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>Symbiote © 2026 — Self-Organizing Trading Agent Collective</p>
+    </footer>
+
+    <script>
+        function connectWallet() {
+            // Check for MetaMask or other wallets
+            if (typeof window.ethereum !== 'undefined') {
+                window.ethereum.request({ method: 'eth_requestAccounts' })
+                    .then(accounts => {
+                        console.log('Connected:', accounts[0]);
+                        document.getElementById('connect').style.display = 'none';
+                        document.getElementById('dashboard').style.display = 'grid';
+                    })
+                    .catch(err => {
+                        console.error('Error:', err);
+                        alert('Failed to connect wallet');
+                    });
+            } else {
+                alert('Please install MetaMask to use Symbiote');
+            }
+        }
+    </script>
+</body>
+</html>
